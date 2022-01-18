@@ -1,33 +1,54 @@
-import {Octokit} from "@octokit/core";
-
 import * as nodeApi from 'azure-devops-node-api';
-import * as CoreApi from 'azure-devops-node-api/CoreApi';
 import * as GitApi from 'azure-devops-node-api/GitApi';
+import * as GitInterfaces from 'azure-devops-node-api/interfaces/GitInterfaces';
+import {Octokit} from "@octokit/rest";
+
+require('dotenv').config()
+
+async function getADORepos(adoOrgURL: string, adoToken: string, projectName: string) {
+    let webApi = new nodeApi.WebApi(adoOrgURL, nodeApi.getPersonalAccessTokenHandler(adoToken));
+    const gitApiObject: GitApi.GitApi = await webApi.getGitApi()
+    return gitApiObject.getRepositories(projectName)
+}
+
+
+
+async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: string, token: string) {
+    const octokit = new Octokit({auth: token})
+
+    let createRepo = function (repoName: string){
+        console.log(`Creating ${repoName} in ${org}`)
+        octokit.rest.repos.createInOrg({
+            org: org,
+            name: repoName,
+            allow_merge_commit: true,
+            allow_rebase_merge: false
+        }).catch(reason => console.log(reason))
+    }
+
+    for (const repo of repos) {
+        console.log(`Checking for ${repo.name} in ${org}`)
+
+        let response = await octokit.rest.repos.get({
+            owner: org,
+            repo: repo.name!
+        }).catch(reason => {
+            console.log(`${repo.name} not found in ${org} (got ${reason.status})`)
+            if(reason.status === 404){
+                createRepo(repo.name!)
+            }
+        });
+
+        if (response) {
+            console.log(`Found ${repo.name} already present in ${org}.`)
+        }
+        console.log("")
+    }
+}
 
 async function run() {
-    require('dotenv').config()
-
-    let adoOrgURL: string = process.env.ADO_ORG!;
-    let adoToken: string = process.env.AZURE_PERSONAL_ACCESS_TOKEN!;
-
-    let authHandler = nodeApi.getPersonalAccessTokenHandler(adoToken);
-    let connection = new nodeApi.WebApi(adoOrgURL, authHandler);
-
-    const projectName: string = "kingfisher-demo"
-    const coreApiObject: CoreApi.CoreApi = await connection.getCoreApi()
-    const gitApiObject: GitApi.GitApi = await connection.getGitApi()
-
-    const project = coreApiObject.getProject(projectName)
-
-    let repos = gitApiObject.getRepositories(projectName)
-
-    for(const repo of await repos){
-        console.log(`name: ${repo.name}`)
-        console.log(`remoteUrl: ${repo.remoteUrl}`)
-        console.log(`projectName: ${repo.project?.name}`)
-        console.log(`******************************`)
-
-    }
+    let repos = await getADORepos(process.env.ADO_ORG!, process.env.AZURE_PERSONAL_ACCESS_TOKEN!, "kingfisher-demo")
+    await createGitHubRepos(repos, process.env.GITHUB_ORG!, process.env.GITHUB_TOKEN!)
 }
 
 let promise = run();

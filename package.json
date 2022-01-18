@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc; node lib/index.js"
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/OneGHEOrg/ado-migrator#readme",
   "dependencies": {
     "@octokit/core": "^3.5.1",
+    "@octokit/rest": "^18.12.0",
     "azure-devops-node-api": "^11.1.0",
     "dotenv": "^14.2.0"
   },
