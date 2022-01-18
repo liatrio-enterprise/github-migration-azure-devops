@@ -1,0 +1,29 @@
+{
+  "name": "ado-migrator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc; node lib/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OneGHEOrg/ado-migrator.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OneGHEOrg/ado-migrator/issues"
+  },
+  "homepage": "https://github.com/OneGHEOrg/ado-migrator#readme",
+  "dependencies": {
+    "@octokit/core": "^3.5.1",
+    "azure-devops-node-api": "^11.1.0",
+    "dotenv": "^14.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.10",
+    "typescript": "^4.5.4"
+  }
+}
