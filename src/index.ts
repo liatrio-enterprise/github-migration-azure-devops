@@ -21,7 +21,7 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: stri
     const octokit = new Octokit({auth: github_pat})
 
     let createRepo = async function (repoName: string, vsc_url: string) {
-        console.log(`Creating ${repoName} in ${org}`)
+        console.log(`${repoName}: creating in ${org}`)
         const creationResult = await octokit.rest.repos.createInOrg({
             org: org,
             name: repoName,
@@ -30,15 +30,15 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: stri
             private: true,
             visibility: "internal"
         }).catch(reason => {
-            console.log('Repo creation failed:')
+            console.log(`${repoName}: repo creation failed:`)
             console.log(reason)
         });
         if (!creationResult) {
             return;
         }
-        console.log(`Creation complete for ${repoName} in ${org} (status: ${creationResult.status})`)
+        console.log(`${repoName}: creation in ${org} complete (status: ${creationResult.status})`)
 
-        console.log(`Starting import for ${creationResult!?.data.name}`)
+        console.log(`${repoName}: starting import to ${org}`)
         const importResult = await octokit.rest.migrations.startImport({
             owner: org,
             repo: creationResult!?.data.name,
@@ -50,25 +50,25 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: stri
             console.log(reason)
         });
         if (importResult) {
-            console.log(`Finished importing ${repoName} in ${org} (status: ${importResult.status})`)
+            console.log(`${repoName}: import started in ${org} (status: ${importResult.status})`)
         }
     }
 
     const promises = repos.map(async repo => {
-        console.log(`Checking for ${repo.name} in ${org}`)
+        console.log(`${repo.name}: checking if present in ${org}`)
 
         const response = await octokit.rest.repos.get({
             owner: org,
             repo: repo.name!
         }).catch(async reason => {
-            console.log(`${repo.name} not found in ${org} (got ${reason.status})`)
+            console.log(`${repo.name}: not found in ${org} (status: ${reason.status})`)
             if (reason.status === 404) {
                 await createRepo(repo.name!, repo.remoteUrl!)
             }
         });
 
         if (response) {
-            console.log(`Found ${repo.name} already present in ${org} (response: ${response?.status}`)
+            console.log(`${repo.name}: already present in ${org} (status: ${response?.status}`)
         }
     })
 
