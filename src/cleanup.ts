@@ -34,13 +34,15 @@ async function deleteGitHubRepos(repos: string[], org: string, token: string) {
     }
 }
 
+/*
+** WARNING **
+This file is a helper/development script to make testing index.ts easier.
+It will delete the repos specified below from the org specified below
+ */
+
 async function run() {
-    let repos = ["kingfisher-demo-infra-deploy",
-        "kingfisher-demo",
-        "kingfisher-demo-api",
-        "kingfisher-demo-app-deploy",
-        "kingfisher-demo-ui"]
-    await deleteGitHubRepos(repos, process.env.GITHUB_ORG!, process.env.GITHUB_TOKEN!)
+    let repos = ["repo-to-delete-1", "repo-to-delete-2"]
+    await deleteGitHubRepos(repos, "org-with-repos-to-delete", process.env.GITHUB_TOKEN!)
 }
 
 let promise = run();
