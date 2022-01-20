@@ -9,7 +9,8 @@ The following secrets should be set so that the workflow has access to them.
 * `GH_IMPORT_PAT` - GitHub PAT with full `repo` access
 
 ## Usage
-Run the workflow in `.github/workflows/import.yml`; provide the URL to the source ADO org and the name of the source project.
+Run the workflow in `.github/workflows/import.yml`; provide the URL to the source ADO org and the name of the source project. 
+By default, the workflow will use the org it's running in as the importation target, but this can be overridden when running the workflow.
 
 ![run workflow interface](img/run_workflow.png)
 
