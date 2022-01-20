@@ -1,0 +1,17 @@
+on:
+  workflow_dispatch:
+
+name: ADO Project Import
+
+jobs:
+  import:
+    name: ADO Project Import
+    runs-on: ubuntu-latest
+    container: node:17.4.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - run: |
+          npm run build
+
