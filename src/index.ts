@@ -71,6 +71,6 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: stri
 }
 
 (async () => {
-    let repos = await getADORepos(process.env.ADO_ORG!, process.env.AZURE_PERSONAL_ACCESS_TOKEN!, "kingfisher-demo")
+    let repos = await getADORepos(process.env.ADO_ORG!, process.env.AZURE_PERSONAL_ACCESS_TOKEN!, process.env.ADO_PROJECT_NAME!)
     await createGitHubRepos(repos, process.env.GITHUB_ORG!, process.env.GITHUB_TOKEN!, process.env.AZURE_PERSONAL_ACCESS_TOKEN!)
 })()

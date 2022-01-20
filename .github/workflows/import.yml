@@ -1,5 +1,20 @@
 on:
   workflow_dispatch:
+    inputs:
+      adoProject:
+        description: Source ADO project to import into this GitHub org
+        required: true
+        default: kingfisher-demo
+      adoOrg:
+        description: URL of parent org for source ADO project
+        required: true
+        default: "https://dev.azure.com/liatrio"
+      githubOrg:
+        description: Target GitHub org for importing to
+        required: true
+        default: ${{ github.repository_owner }}
+
+
 
 name: ADO Project Import
 
@@ -12,7 +27,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - run: |
+      - name: Install and build
+        run: |
           npm install --dev
           npm run build
 
+      - name: Run import
+        run: node lib/index.js
+        env:
+          ADO_ORG:  ${{ github.event.inputs.adoOrg }}
+          ADO_PROJECT_NAME: ${{ github.event.inputs.adoProject }}
+          AZURE_PERSONAL_ACCESS_TOKEN: ${{ secret.ADO_IMPORT_PAT }}
+          GITHUB_ORG: ${{ github.event.inputs.githubOrg }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
