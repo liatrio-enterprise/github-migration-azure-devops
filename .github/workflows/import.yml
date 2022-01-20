@@ -31,6 +31,6 @@ jobs:
         env:
           ADO_ORG:  ${{ github.event.inputs.adoOrg }}
           ADO_PROJECT_NAME: ${{ github.event.inputs.adoProject }}
-          AZURE_PERSONAL_ACCESS_TOKEN: ${{ secret.ADO_IMPORT_PAT }}
+          AZURE_PERSONAL_ACCESS_TOKEN: ${{ secrets.ADO_IMPORT_PAT }}
           GITHUB_ORG: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
