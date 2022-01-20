@@ -25,7 +25,6 @@ jobs:
 
       - name: Determine target org
         run: |
-          echo "**${{ github.event.inputs.githubOrg }}**"
           if [[ "${{ github.event.inputs.githubOrg }}" != "" ]]; then
             echo "GITHUB_ORG=${{ github.event.inputs.githubOrg }}" >> $GITHUB_ENV
           else
