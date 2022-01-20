@@ -8,7 +8,13 @@ require('dotenv').config()
 async function getADORepos(adoOrgURL: string, adoToken: string, projectName: string) {
     let webApi = new nodeApi.WebApi(adoOrgURL, nodeApi.getPersonalAccessTokenHandler(adoToken));
     const gitApiObject: GitApi.GitApi = await webApi.getGitApi()
-    return gitApiObject.getRepositories(projectName)
+    const repositories = await gitApiObject.getRepositories(projectName)
+
+    console.log(`Found the following repos under ${adoOrgURL}/${projectName}`)
+    repositories.map(value => console.log(`* ${value.name}`))
+    console.log("")
+
+    return repositories
 }
 
 async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: string, github_pat: string, azure_pat: string) {
