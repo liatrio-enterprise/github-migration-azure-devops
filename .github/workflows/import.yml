@@ -8,6 +8,9 @@ on:
         description: URL of parent org for source ADO project
         required: true
         default: "https://dev.azure.com/liatrio"
+      githubOrg:
+        description: Target GitHub org to import into (defaults to current org)
+        required: false
 
 name: ADO Project Import
 
@@ -20,6 +23,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Determine target org
+        run: |
+          if [[ "${{ github.event.inputs.githubOrg }}" != "" ]]; then
+            echo "GITHUB_ORG=${{ github.event.inputs.githubOrg }}" >> $GITHUB_ENV
+          else
+            echo "GITHUB_ORG=${{ github.repository_owner }}" >> $GITHUB_ENV
+          fi
+
       - name: Install and build
         run: |
           npm install --dev
@@ -31,5 +42,4 @@ jobs:
           ADO_ORG:  ${{ github.event.inputs.adoOrg }}
           ADO_PROJECT_NAME: ${{ github.event.inputs.adoProject }}
           AZURE_PERSONAL_ACCESS_TOKEN: ${{ secrets.ADO_IMPORT_PAT }}
-          GITHUB_ORG: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GH_IMPORT_PAT }}
