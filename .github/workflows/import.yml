@@ -4,7 +4,6 @@ on:
       adoProject:
         description: Source ADO project to import into this GitHub org
         required: true
-        default: kingfisher-demo
       adoOrg:
         description: URL of parent org for source ADO project
         required: true
@@ -33,4 +32,4 @@ jobs:
           ADO_PROJECT_NAME: ${{ github.event.inputs.adoProject }}
           AZURE_PERSONAL_ACCESS_TOKEN: ${{ secrets.ADO_IMPORT_PAT }}
           GITHUB_ORG: ${{ github.repository_owner }}
-          GITHUB_TOKEN: ${{ secrets.GH_PAT_FOR_IMPORT }}
+          GITHUB_TOKEN: ${{ secrets.GH_IMPORT_PAT }}
