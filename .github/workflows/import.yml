@@ -25,11 +25,13 @@ jobs:
 
       - name: Determine target org
         run: |
+          echo "**${{ github.event.inputs.githubOrg }}**"
           if [[ "${{ github.event.inputs.githubOrg }}" != "" ]]; then
             echo "GITHUB_ORG=${{ github.event.inputs.githubOrg }}" >> $GITHUB_ENV
           else
             echo "GITHUB_ORG=${{ github.repository_owner }}" >> $GITHUB_ENV
           fi
+        shell: bash
 
       - name: Install and build
         run: |
