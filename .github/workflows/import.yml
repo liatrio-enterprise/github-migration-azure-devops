@@ -9,12 +9,6 @@ on:
         description: URL of parent org for source ADO project
         required: true
         default: "https://dev.azure.com/liatrio"
-      githubOrg:
-        description: Target GitHub org for importing to
-        required: true
-        default: ${{ github.repository_owner }}
-
-
 
 name: ADO Project Import
 
@@ -38,5 +32,5 @@ jobs:
           ADO_ORG:  ${{ github.event.inputs.adoOrg }}
           ADO_PROJECT_NAME: ${{ github.event.inputs.adoProject }}
           AZURE_PERSONAL_ACCESS_TOKEN: ${{ secret.ADO_IMPORT_PAT }}
-          GITHUB_ORG: ${{ github.event.inputs.githubOrg }}
+          GITHUB_ORG: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
