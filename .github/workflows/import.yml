@@ -33,4 +33,4 @@ jobs:
           ADO_PROJECT_NAME: ${{ github.event.inputs.adoProject }}
           AZURE_PERSONAL_ACCESS_TOKEN: ${{ secrets.ADO_IMPORT_PAT }}
           GITHUB_ORG: ${{ github.repository_owner }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT_FOR_IMPORT }}
