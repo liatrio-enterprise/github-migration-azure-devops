@@ -36,7 +36,7 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: stri
         if (!creationResult) {
             return;
         }
-        console.log(`${repoName}: creation in ${org} complete (status: ${creationResult.status})`)
+        console.log(`${repoName}: creation complete in ${org} (status: ${creationResult.status})`)
 
         console.log(`${repoName}: starting import to ${org}`)
         const importResult = await octokit.rest.migrations.startImport({
@@ -46,11 +46,11 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: stri
             vcs_password: azure_pat,
             vcs_url: vsc_url
         }).catch(reason => {
-            console.log('Repo importation failed:')
+            console.log(`${repoName}: repo importation failed:`)
             console.log(reason)
         });
         if (importResult) {
-            console.log(`${repoName}: import started in ${org} (status: ${importResult.status})`)
+            console.log(`${repoName}: import started successfully in ${org} (status: ${importResult.status})`)
         }
     }
 
