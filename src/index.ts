@@ -54,10 +54,10 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: stri
         const response = await octokit.rest.repos.get({
             owner: org,
             repo: repo.name!
-        }).catch(reason => {
+        }).catch(async reason => {
             console.log(`${repo.name} not found in ${org} (got ${reason.status})`)
             if (reason.status === 404) {
-                createRepo(repo.name!, repo.remoteUrl!)
+                await createRepo(repo.name!, repo.remoteUrl!)
             }
         });
 
