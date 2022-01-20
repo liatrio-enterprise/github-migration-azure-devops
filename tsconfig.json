@@ -5,7 +5,13 @@
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "lib": [
+      "dom",
+      "es5",
+      "scripthost",
+      "es2015.promise"
+    ]
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/__tests__/*"]

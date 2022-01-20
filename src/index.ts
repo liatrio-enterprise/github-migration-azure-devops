@@ -19,13 +19,15 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: stri
         const creationResult = await octokit.rest.repos.createInOrg({
             org: org,
             name: repoName,
-            allow_merge_commit: true,
-            allow_rebase_merge: false
+            allow_merge_commit: false,
+            allow_rebase_merge: false,
+            private: true,
+            visibility: "internal"
         }).catch(reason => {
             console.log('Repo creation failed:')
             console.log(reason)
         });
-        if (!creationResult){
+        if (!creationResult) {
             return;
         }
         console.log(`Creation complete for ${repoName} in ${org} (status: ${creationResult.status})`)
@@ -41,12 +43,12 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: stri
             console.log('Repo importation failed:')
             console.log(reason)
         });
-        if (importResult){
+        if (importResult) {
             console.log(`Finished importing ${repoName} in ${org} (status: ${importResult.status})`)
         }
     }
 
-    for (const repo of repos) {
+    const promises = repos.map(async repo => {
         console.log(`Checking for ${repo.name} in ${org}`)
 
         const response = await octokit.rest.repos.get({
@@ -55,16 +57,17 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: stri
         }).catch(reason => {
             console.log(`${repo.name} not found in ${org} (got ${reason.status})`)
             if (reason.status === 404) {
-                // console.log(repo);
                 createRepo(repo.name!, repo.remoteUrl!)
             }
         });
 
         if (response) {
-            console.log(`Found ${repo.name} already present in ${org}.`)
+            console.log(`Found ${repo.name} already present in ${org} (response: ${response?.status}`)
         }
-        console.log("")
-    }
+    })
+
+    await Promise.all(promises)
+    console.log(`Importation complete for ${org}`)
 }
 
 (async () => {
