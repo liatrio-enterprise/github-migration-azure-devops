@@ -16,3 +16,15 @@ By default, the workflow will use the org it's running in as the importation tar
 
 The script will get a list of all the Git repositories in the source project, 
 and will import them to the current GitHub org unless a repository with a matching name already exists.
+
+
+## Local setup
+Create a `.env` file with the following keys:
+```shell
+ADO_ORG=[Azure DevOps org url]
+ADO_PROJECT_NAME=[project name]
+AZURE_PERSONAL_ACCESS_TOKEN=[Azure DevOps PAT]
+GITHUB_ORG=[GitHub org name]
+GITHUB_TOKEN=[GitHub PAT]
+GITHUB_TEAM_NAME=[optional GitHub team name]
+```
