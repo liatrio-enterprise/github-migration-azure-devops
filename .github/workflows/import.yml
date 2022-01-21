@@ -11,6 +11,9 @@ on:
       githubOrg:
         description: Target GitHub org to import into (defaults to current org)
         required: false
+      githubTeamName:
+        description: Github team for maintaining repos
+        required: false
 
 name: ADO Project Import
 
@@ -44,3 +47,4 @@ jobs:
           ADO_PROJECT_NAME: ${{ github.event.inputs.adoProject }}
           AZURE_PERSONAL_ACCESS_TOKEN: ${{ secrets.ADO_IMPORT_PAT }}
           GITHUB_TOKEN: ${{ secrets.GH_IMPORT_PAT }}
+          GITHUB_TEAM_NAME: ${{ github.event.inputs.githubTeamName }}
