@@ -1,7 +1,7 @@
 import * as nodeApi from 'azure-devops-node-api';
 import * as GitApi from 'azure-devops-node-api/GitApi';
 import * as GitInterfaces from 'azure-devops-node-api/interfaces/GitInterfaces';
-import {Octokit} from "@octokit/rest";
+import {Octokit, RestEndpointMethodTypes} from "@octokit/rest";
 
 require('dotenv').config()
 
@@ -17,18 +17,23 @@ async function getADORepos(adoOrgURL: string, adoToken: string, projectName: str
     return repositories
 }
 
-async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: string, github_pat: string, azure_pat: string) {
+async function createGitHubRepos(repos: GitInterfaces.GitRepository[],
+                                 org: string,
+                                 github_pat: string,
+                                 azure_pat: string,
+                                 teamName: string | undefined) {
     const octokit = new Octokit({auth: github_pat})
 
     let createRepo = async function (repoName: string, vsc_url: string) {
         console.log(`${repoName}: creating in ${org}`)
+
         const creationResult = await octokit.rest.repos.createInOrg({
             org: org,
             name: repoName,
             allow_merge_commit: false,
             allow_rebase_merge: false,
             private: true,
-            visibility: "internal"
+            visibility: <RestEndpointMethodTypes["repos"]["createInOrg"]["parameters"]["visibility"]>"internal"
         }).catch(reason => {
             console.log(`${repoName}: repo creation failed:`)
             console.log(reason)
@@ -38,11 +43,26 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: stri
         }
         console.log(`${repoName}: creation complete in ${org} (status: ${creationResult.status})`)
 
+        if (teamName) {
+            console.log(`${repoName}: adding ${teamName} as maintainers`)
+            octokit.rest.repos.addTeamAccessRestrictions
+            const teamResult = await octokit.rest.teams.addOrUpdateRepoPermissionsInOrg({
+                org: org,
+                owner: org,
+                permission: <RestEndpointMethodTypes["teams"]["addOrUpdateRepoPermissionsInOrg"]["parameters"]["permission"]>"maintain",
+                repo: repoName,
+                team_slug: teamName
+            }).catch(reason => console.log(`${repoName}: error adding ${teamName} as maintainers:\n${reason}`))
+            if (teamResult) {
+                console.log(`${repoName}: added ${teamName} as maintainers`)
+            }
+        }
+
         console.log(`${repoName}: starting import to ${org}`)
         const importResult = await octokit.rest.migrations.startImport({
             owner: org,
             repo: creationResult!?.data.name,
-            vcs: "git",
+            vcs: <RestEndpointMethodTypes["migrations"]["startImport"]["parameters"]["vcs"]>"git",
             vcs_password: azure_pat,
             vcs_url: vsc_url
         }).catch(reason => {
@@ -78,5 +98,10 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[], org: stri
 
 (async () => {
     let repos = await getADORepos(process.env.ADO_ORG!, process.env.AZURE_PERSONAL_ACCESS_TOKEN!, process.env.ADO_PROJECT_NAME!)
-    await createGitHubRepos(repos, process.env.GITHUB_ORG!, process.env.GITHUB_TOKEN!, process.env.AZURE_PERSONAL_ACCESS_TOKEN!)
+    await createGitHubRepos(repos,
+        process.env.GITHUB_ORG!,
+        process.env.GITHUB_TOKEN!,
+        process.env.AZURE_PERSONAL_ACCESS_TOKEN!,
+        process.env.GITHUB_TEAM_NAME!,
+    )
 })()
