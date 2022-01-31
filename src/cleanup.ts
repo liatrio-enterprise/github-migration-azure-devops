@@ -41,8 +41,14 @@ It will delete the repos specified below from the org specified below
  */
 
 async function run() {
-    let repos = ["repo-to-delete-1", "repo-to-delete-2"]
-    await deleteGitHubRepos(repos, "org-with-repos-to-delete", process.env.GITHUB_TOKEN!)
+    let repos = [
+        "OneGHEOrg/kingfisher-demo-ui", 
+        "OneGHEOrg/kingfisher-demo-infra-deploy",
+        "OneGHEOrg/kingfisher-demo-api",
+        "OneGHEOrg/kingfisher-demo-app-deploy",
+        "OneGHEOrg/kingfisher-demo"
+    ]
+    await deleteGitHubRepos(repos, "OneGHEOrg", process.env.GITHUB_TOKEN!)
 }
 
 let promise = run();
