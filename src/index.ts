@@ -27,6 +27,10 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[],
     let createRepo = async function (repoName: string, vsc_url: string) {
         console.log(`${repoName}: creating in ${org}`)
 
+        if (teamName){
+            repoName = `${teamName}.${repoName}`
+        }
+
         const creationResult = await octokit.rest.repos.createInOrg({
             org: org,
             name: repoName,
@@ -42,21 +46,6 @@ async function createGitHubRepos(repos: GitInterfaces.GitRepository[],
             return;
         }
         console.log(`${repoName}: creation complete in ${org} (status: ${creationResult.status})`)
-
-        if (teamName) {
-            console.log(`${repoName}: adding ${teamName} as maintainers`)
-            octokit.rest.repos.addTeamAccessRestrictions
-            const teamResult = await octokit.rest.teams.addOrUpdateRepoPermissionsInOrg({
-                org: org,
-                owner: org,
-                permission: <RestEndpointMethodTypes["teams"]["addOrUpdateRepoPermissionsInOrg"]["parameters"]["permission"]>"maintain",
-                repo: repoName,
-                team_slug: teamName
-            }).catch(reason => console.log(`${repoName}: error adding ${teamName} as maintainers:\n${reason}`))
-            if (teamResult) {
-                console.log(`${repoName}: added ${teamName} as maintainers`)
-            }
-        }
 
         console.log(`${repoName}: starting import to ${org}`)
         const importResult = await octokit.rest.migrations.startImport({
